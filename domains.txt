@@ -1,0 +1,2 @@
+yourdomain.com #Add your list of domains here. One per line.
+your2nddomain.com

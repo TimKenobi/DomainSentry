@@ -1,0 +1,5 @@
+aiohttp==3.9.5
+colorama==0.4.6
+dnspython==2.6.1
+requests==2.32.3
+sublist3r==1.0
