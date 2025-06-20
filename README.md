@@ -84,8 +84,8 @@ The tool is optimized for execution within a Python virtual environment on an Ub
     Bash
     
     ```
-    git clone https://github.com/<your-username>/DomainSentry.git /opt/domain_scanner
-    cd /opt/domain_scanner
+    git clone https://github.com/<your-username>/DomainSentry.git /opt/domainsentry
+    cd /opt/domainsentry
     
     ```
     
@@ -116,14 +116,14 @@ The tool is optimized for execution within a Python virtual environment on an Ub
     Bash
     
     ```
-    sudo chown $(whoami):$(whoami) /opt/domain_scanner -R
-    sudo chmod -R u+rw /opt/domain_scanner
+    sudo chown $(whoami):$(whoami) /opt/domainsentry -R
+    sudo chmod -R u+rw /opt/domainsentry
     
     ```
     
 5.  Create a Domains File:
     
-    Create /opt/domain_scanner/domains.txt with one domain per line:
+    Create /opt/domainsentry/domains.txt with one domain per line:
     
     ```
     example.com
@@ -133,7 +133,7 @@ The tool is optimized for execution within a Python virtual environment on an Ub
     
 6.  Configure Email Recipients:
     
-    Edit /opt/domain_scanner/domainsentry.py and update the EMAIL_RECIPIENTS list:
+    Edit /opt/domainsentry/domainsentry.py and update the EMAIL_RECIPIENTS list:
     
     Python
     
@@ -173,7 +173,7 @@ The script will read domains from `/opt/domainsentry/domains.txt`, generate repo
     Bash
     
     ```
-    nano /opt/domain_scanner/run_domainsentry.sh
+    nano /opt/domainsentry/run_domainsentry.sh
     
     ```
     
@@ -183,8 +183,8 @@ The script will read domains from `/opt/domainsentry/domains.txt`, generate repo
     
     ```
     #!/bin/bash
-    source /opt/domain_scanner/venv/bin/activate
-    python3 /opt/domain_scanner/domainsentry.py >> /opt/domain_scanner/output/cron.log 2>&1
+    source /opt/domainsentry/venv/bin/activate
+    python3 /opt/domainsentry/domainsentry.py >> /opt/domainsentry/output/cron.log 2>&1
     deactivate
     
     ```
@@ -194,7 +194,7 @@ The script will read domains from `/opt/domainsentry/domains.txt`, generate repo
     Bash
     
     ```
-    chmod +x /opt/domain_scanner/run_domainsentry.sh
+    chmod +x /opt/domainsentry/run_domainsentry.sh
     
     ```
     
@@ -210,7 +210,7 @@ The script will read domains from `/opt/domainsentry/domains.txt`, generate repo
     Add the following line:
     
     ```
-    0 2 1 * * /bin/bash /opt/domain_scanner/run_domainsentry.sh
+    0 2 1 * * /bin/bash /opt/domainsentry/run_domainsentry.sh
     
     ```
     
@@ -231,7 +231,7 @@ The script will read domains from `/opt/domainsentry/domains.txt`, generate repo
 
 -   **Cron Job Issues**:
     -   Check cron logs: `grep CRON /var/log/syslog`
-    -   Verify script output: `cat /opt/domain_scanner/output/cron.log`
+    -   Verify script output: `cat /opt/domainsentry/output/cron.log`
 -   **SMTP Errors**:
     -   Test SMTP connectivity: `nc -zv relay.yourcompany.net 25`
     -   Check `/opt/domainsentry/output/log.txt` for any email-related errors.
