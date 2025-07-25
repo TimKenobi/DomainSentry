@@ -11,6 +11,8 @@
 
 The tool culminates its analysis by generating comprehensive reports in both text and CSV formats. These reports are then automatically dispatched via email to a designated list of recipients, positioning DomainSentry as an indispensable asset for security teams tasked with overseeing domain configurations and preempting potential vulnerabilities.
 
+The other python file "certificatesentry.py" is a simplified version that generates a report for only newly issued certificates. Useful for a daily scan and not as resource heavy if you have a lot of domains.
+
 ----------
 
 ## ✨ Features
