@@ -1,0 +1,9 @@
+output/
+__pycache__/
+*.pyc
+*.pyo
+.env
+*.backup
+*.backup2
+*.bak
+venv/

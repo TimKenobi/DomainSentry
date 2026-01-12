@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  domain_scanner:
+    build: .
+    container_name: domain_scanner
+    restart: unless-stopped
+    environment:
+      - TZ=UTC
+    volumes:
+      - ./output:/app/output
