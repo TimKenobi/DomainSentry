@@ -1,0 +1,7 @@
+# DomainSentry - Example Domains File
+# Add your domains to monitor, one per line
+# Lines starting with # are treated as comments
+
+example.com
+example.org
+yourdomain.com

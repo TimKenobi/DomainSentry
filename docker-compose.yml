@@ -1,11 +1,17 @@
 version: '3.8'
 
 services:
-  domain_scanner:
+  domainsentry:
     build: .
-    container_name: domain_scanner
+    container_name: domainsentry
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
+      - SMTP_HOST=${SMTP_HOST:-localhost}
+      - SMTP_PORT=${SMTP_PORT:-25}
+      - EMAIL_FROM=${EMAIL_FROM:-domainsentry@example.com}
+      - EMAIL_RECIPIENTS=${EMAIL_RECIPIENTS:-}
       - TZ=UTC
     volumes:
       - ./output:/app/output

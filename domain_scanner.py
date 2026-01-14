@@ -34,19 +34,18 @@ except ImportError:
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Configuration
-OUTPUT_DIR = "/opt/domain_scanner/output"
+# Configuration - use environment variables for sensitive settings
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.getenv("OUTPUT_DIR", os.path.join(SCRIPT_DIR, "output"))
 AWS_RANGES_FILE = os.path.join(OUTPUT_DIR, 'aws_ip_ranges.json')
 AWS_RANGES_CACHE_DAYS = 1
-SMTP_HOST = "relay.stahls.net"
-SMTP_PORT = 25
+SMTP_HOST = os.getenv("SMTP_HOST", "localhost")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "25"))
 LOG_FILE = os.path.join(OUTPUT_DIR, "log.txt")
-# List of email recipients
-EMAIL_RECIPIENTS = [
-    "tim.branson@stahls.com",
-    "joseph.paul@stahls.com",
-    "mike.karr@stahls.com",
-]
+
+# Email configuration - set via environment variable (comma-separated)
+EMAIL_RECIPIENTS = [e.strip() for e in os.getenv("EMAIL_RECIPIENTS", "").split(",") if e.strip()]
+EMAIL_FROM = os.getenv("EMAIL_FROM", "domainsentry@example.com")
 
 # ============= CLOUD PROVIDER PATTERNS FOR SUBDOMAIN TAKEOVER DETECTION =============
 # These CNAME patterns indicate cloud services that may be vulnerable to takeover
@@ -372,10 +371,14 @@ def check_port_25(domain):
         return "Closed"
 
 def send_email(subject, body, attachments):
+    if not EMAIL_RECIPIENTS:
+        logger.warning("No email recipients configured - skipping email")
+        return
+    
     msg = EmailMessage()
     msg.set_content(body)
     msg['Subject'] = subject
-    msg['From'] = "bransont@stahls.com"
+    msg['From'] = EMAIL_FROM
     msg['To'] = ", ".join(EMAIL_RECIPIENTS)
 
     for file_path in attachments:
@@ -923,7 +926,7 @@ IMMEDIATE ACTION REQUIRED: Review the attached report and either:
 
 def main():
     parser = argparse.ArgumentParser(description="Comprehensive domain and subdomain scanner")
-    parser.add_argument('--domain-file', type=str, default="/opt/domain_scanner/domains.txt", help="Path to file containing domains, one per line")
+    parser.add_argument('--domain-file', type=str, default="domains.txt", help="Path to file containing domains, one per line")
     parser.add_argument('--daemon', action='store_true', help="Run as daemon with monthly scheduled scans")
     parser.add_argument('--scan-day', type=int, default=1, help="Day of month to run scan (1-28)")
     parser.add_argument('--scan-time', type=str, default="09:00", help="Time to run monthly scan (HH:MM format, UTC)")

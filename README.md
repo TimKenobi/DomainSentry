@@ -1,15 +1,15 @@
-# Domain Scanner - Docker Deployment
+# DomainSentry 🛡️
 
-Comprehensive domain and subdomain security scanner with dangling DNS detection and email reporting.
+Comprehensive domain and subdomain security scanner with dangling DNS detection, subdomain takeover vulnerability identification, and email alerting.
 
 ## Features
 
-### Subdomain Enumeration
+### 🔍 Subdomain Enumeration
 - **Multiple discovery sources**: Google, Bing, Yahoo, VirusTotal, Netcraft, SSL certificates
 - **DNS fallback**: Checks common subdomain patterns if sources fail
 - **Persistent tracking**: Detects new subdomains since last scan
 
-### DNS Security Analysis
+### 🚨 DNS Security Analysis
 - **Dangling CNAME Detection**: Identifies CNAMEs pointing to non-existent resources
 - **Orphaned IP Detection**: Finds A records pointing to unresponsive hosts
 - **Cloud Provider Identification**: 48+ patterns including:
@@ -18,7 +18,7 @@ Comprehensive domain and subdomain security scanner with dangling DNS detection 
   - Platform services (Heroku, GitHub Pages, Netlify, Vercel, Shopify, Zendesk)
   - Modern platforms (Cloudflare Pages/Workers, Fly.io, Render)
 
-### Vulnerability Severity Levels
+### ⚠️ Vulnerability Severity Levels
 | Severity | Description |
 |----------|-------------|
 | CRITICAL | Dangling CNAME to known cloud provider - immediate takeover risk |
@@ -26,77 +26,134 @@ Comprehensive domain and subdomain security scanner with dangling DNS detection 
 | MEDIUM | Unresponsive IP addresses - may indicate orphaned resources |
 | INFO/OK | Normal configuration |
 
-### Additional Checks
+### 📊 Additional Checks
 - **AWS hosting detection** via IP range matching
 - **IIS default page detection** 
 - **Port 25 (SMTP) status checking**
-- **SSL certificate monitoring** (last 72 hours)
+- **SSL certificate monitoring** (last 72 hours via crt.sh)
 - **HTTP/HTTPS endpoint testing**
 
-### Reporting
-- **Monthly automated scans** on the 1st at 09:00 UTC (configurable)
+### 📧 Reporting
+- **Scheduled automated scans** (configurable day/time)
 - **Email reports** with CSV and text attachments
 - **Critical vulnerability alerts** in email subject when dangling CNAMEs found
 - **DNS Vulnerabilities Summary** section in reports
 
 ## Quick Start
 
-### Build and run the container:
+### 1. Clone the repository
 ```bash
-cd /opt/domain_scanner
-sudo docker compose up -d
+git clone https://github.com/TimKenobi/DomainSentry.git
+cd DomainSentry
 ```
 
-### View logs:
+### 2. Create your configuration
 ```bash
-sudo docker compose logs -f
+# Copy the example environment file
+cp .env.example .env
+
+# Edit with your settings
+nano .env
 ```
 
-### Stop the container:
+### 3. Add your domains
 ```bash
-sudo docker compose down
+# Edit domains.txt with your domains (one per line)
+nano domains.txt
 ```
 
-### Rebuild after code changes:
+### 4. Run with Docker
 ```bash
-sudo docker compose down
-sudo docker compose build --no-cache
-sudo docker compose up -d
+# Build and start the container
+docker compose up -d
+
+# View logs
+docker compose logs -f
+
+# Stop
+docker compose down
 ```
 
 ## Configuration
 
-### Change scan schedule:
-Edit the Dockerfile CMD or docker-compose.yml:
+### Environment Variables
+
+Create a `.env` file with the following variables:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `SMTP_HOST` | SMTP server hostname | `localhost` |
+| `SMTP_PORT` | SMTP server port | `25` |
+| `EMAIL_FROM` | Sender email address | `domainsentry@example.com` |
+| `EMAIL_RECIPIENTS` | Comma-separated recipient emails | (empty) |
+| `OUTPUT_DIR` | Output directory for reports | `./output` |
+| `TZ` | Timezone | `UTC` |
+
+### Scan Schedule
+
+Modify the schedule in `docker-compose.yml` or via command line arguments:
+
 ```bash
 # Run on the 15th of each month at 14:00 UTC
-CMD ["python", "domain_scanner.py", "--daemon", "--scan-day", "15", "--scan-time", "14:00", "--domain-file", "/app/domains.txt"]
+python domain_scanner.py --daemon --scan-day 15 --scan-time 14:00 --domain-file domains.txt
 ```
 
-### Update domains:
-Edit `domains.txt` and rebuild:
-```bash
-sudo docker compose down
-sudo docker compose build
-sudo docker compose up -d
-```
+### Command Line Options
 
-### Update email recipients:
-Edit `domain_scanner.py` and find the `EMAIL_RECIPIENTS` list:
-```python
-EMAIL_RECIPIENTS = [
-    "tim.branson@stahls.com",
-    "joseph.paul@stahls.com",
-    "mike.karr@stahls.com",
-]
-```
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--domain-file` | Path to domain list file | `domains.txt` |
+| `--daemon` | Run as daemon with scheduled scans | false |
+| `--scan-day` | Day of month for scheduled scan (1-28) | `1` |
+| `--scan-time` | Time for scan in HH:MM format (UTC) | `09:00` |
 
 ## Manual Scan
 
-Run a manual scan without waiting for schedule:
+Run a one-time scan without waiting for the schedule:
+
 ```bash
-sudo docker exec domain_scanner python domain_scanner.py
+# With Docker
+docker exec domainsentry python domain_scanner.py --domain-file /app/domains.txt
+
+# Without Docker (in virtual environment)
+python domain_scanner.py --domain-file domains.txt
 ```
+
+## Output Files
+
+Reports are saved to the `output/` directory:
+- `combined_report_*.csv` - Detailed CSV report
+- `combined_report_*.txt` - Text summary report
+- `log.txt` - Application logs
+
+## Domain File Format
+
+Create a `domains.txt` file with one domain per line:
+
+```
+example.com
+example.org
+mycompany.com
+```
+
+Lines starting with `#` are treated as comments.
+
+## Security Recommendations
+
+When dangling CNAMEs are detected:
+
+1. **Verify**: Confirm the subdomain is no longer needed
+2. **Remove**: Delete the DNS record from your DNS provider
+3. **Or Reclaim**: If still needed, reclaim the cloud resource
+4. **Monitor**: Re-run DomainSentry to verify the fix
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Output Files
 

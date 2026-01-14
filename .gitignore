@@ -7,3 +7,11 @@ __pycache__/
 *.backup2
 *.bak
 venv/
+
+# Domain files (contain organization-specific domains)
+domains.txt
+!domains.txt.example
+
+# Logs
+*.log
+log.txt
