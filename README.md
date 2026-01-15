@@ -155,16 +155,6 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Output Files
-
-All reports are saved to the `output/` directory:
-- `combined_report_*.txt` - Text reports with vulnerability summary
-- `combined_report_*.csv` - CSV reports with columns:
-  - Domain, Subdomain, A Records, CNAME, MX Records
-  - Spoofable, DNS Health, Cloud Provider, CNAME Target
-  - Lander, Final URL, Port 25, IIS Page, Errors
-- `log.txt` - Application logs
-
 ## CSV Report Columns
 
 | Column | Description |

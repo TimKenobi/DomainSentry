@@ -12,6 +12,9 @@ venv/
 domains.txt
 !domains.txt.example
 
+# Internal documentation (contains internal URLs/details)
+docs/INTERNAL_WIKI.md
+
 # Logs
 *.log
 log.txt
