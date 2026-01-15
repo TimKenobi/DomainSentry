@@ -18,3 +18,6 @@ docs/INTERNAL_WIKI.md
 # Logs
 *.log
 log.txt
+
+# GitHub Actions/Agents (may contain internal references)
+.github/
