@@ -211,4 +211,4 @@ Email body explains:
 
 ## Repository
 
-https://gitea.stahlsitsec.local/bransont/domain_scanner
+https://github.com/TimKenobi/DomainSentry
